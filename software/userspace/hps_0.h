@@ -171,19 +171,19 @@
 #define AVALON_RPM_0_COMPONENT_TYPE avalon_rpm
 #define AVALON_RPM_0_COMPONENT_NAME avalon_rpm_0
 #define AVALON_RPM_0_BASE 0x40000
-#define AVALON_RPM_0_SPAN 262144
-#define AVALON_RPM_0_END 0x7ffff
+#define AVALON_RPM_0_SPAN 8
+#define AVALON_RPM_0_END 0x40007
 
 /*
- * Macros for device 'custom_count_0', class 'custom_count'
- * The macros are prefixed with 'CUSTOM_COUNT_0_'.
+ * Macros for device 'avalon_encoder_0', class 'avalon_encoder'
+ * The macros are prefixed with 'AVALON_ENCODER_0_'.
  * The prefix is the slave descriptor.
  */
-#define CUSTOM_COUNT_0_COMPONENT_TYPE custom_count
-#define CUSTOM_COUNT_0_COMPONENT_NAME custom_count_0
-#define CUSTOM_COUNT_0_BASE 0x80000
-#define CUSTOM_COUNT_0_SPAN 262144
-#define CUSTOM_COUNT_0_END 0xbffff
+#define AVALON_ENCODER_0_COMPONENT_TYPE avalon_encoder
+#define AVALON_ENCODER_0_COMPONENT_NAME avalon_encoder_0
+#define AVALON_ENCODER_0_BASE 0x50000
+#define AVALON_ENCODER_0_SPAN 8
+#define AVALON_ENCODER_0_END 0x50007
 
 
 #endif /* _ALTERA_HPS_0_H_ */

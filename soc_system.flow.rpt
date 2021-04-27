@@ -1,5 +1,5 @@
 Flow report for soc_system
-Tue Apr 27 12:48:26 2021
+Tue Apr 27 13:00:14 2021
 Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 
 
@@ -41,25 +41,25 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------+
 ; Flow Summary                                                                  ;
 +---------------------------------+---------------------------------------------+
-; Flow Status                     ; Successful - Tue Apr 27 12:48:24 2021       ;
+; Flow Status                     ; Successful - Tue Apr 27 12:58:40 2021       ;
 ; Quartus Prime Version           ; 19.1.0 Build 670 09/22/2019 SJ Lite Edition ;
 ; Revision Name                   ; soc_system                                  ;
 ; Top-level Entity Name           ; ghrd                                        ;
 ; Family                          ; Cyclone V                                   ;
 ; Device                          ; 5CSEMA4U23C6                                ;
 ; Timing Models                   ; Final                                       ;
-; Logic utilization (in ALMs)     ; N/A                                         ;
-; Total registers                 ; 4966                                        ;
-; Total pins                      ; 230                                         ;
+; Logic utilization (in ALMs)     ; 3,534 / 15,880 ( 22 % )                     ;
+; Total registers                 ; 5121                                        ;
+; Total pins                      ; 230 / 314 ( 73 % )                          ;
 ; Total virtual pins              ; 0                                           ;
-; Total block memory bits         ; 526,336                                     ;
-; Total DSP Blocks                ; 0                                           ;
+; Total block memory bits         ; 526,336 / 2,764,800 ( 19 % )                ;
+; Total DSP Blocks                ; 0 / 84 ( 0 % )                              ;
 ; Total HSSI RX PCSs              ; 0                                           ;
 ; Total HSSI PMA RX Deserializers ; 0                                           ;
 ; Total HSSI TX PCSs              ; 0                                           ;
 ; Total HSSI PMA TX Serializers   ; 0                                           ;
-; Total PLLs                      ; 0                                           ;
-; Total DLLs                      ; 1                                           ;
+; Total PLLs                      ; 0 / 5 ( 0 % )                               ;
+; Total DLLs                      ; 1 / 4 ( 25 % )                              ;
 +---------------------------------+---------------------------------------------+
 
 
@@ -135,7 +135,10 @@ https://fpgasoftware.intel.com/eula.
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Analysis & Synthesis ; 00:04:25     ; 1.3                     ; 1491 MB             ; 00:06:14                           ;
-; Total                ; 00:04:25     ; --                      ; --                  ; 00:06:14                           ;
+; Fitter               ; 00:09:29     ; 1.1                     ; 2817 MB             ; 00:12:47                           ;
+; Assembler            ; 00:00:30     ; 1.0                     ; 1084 MB             ; 00:00:29                           ;
+; Timing Analyzer      ; 00:01:32     ; 1.3                     ; 1710 MB             ; 00:01:50                           ;
+; Total                ; 00:15:56     ; --                      ; --                  ; 00:21:20                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -145,6 +148,9 @@ https://fpgasoftware.intel.com/eula.
 ; Module Name          ; Machine Hostname ; OS Name        ; OS Version ; Processor type ;
 +----------------------+------------------+----------------+------------+----------------+
 ; Analysis & Synthesis ; franz-pc         ; Ubuntu 18.04.5 ; 18         ; x86_64         ;
+; Fitter               ; franz-pc         ; Ubuntu 18.04.5 ; 18         ; x86_64         ;
+; Assembler            ; franz-pc         ; Ubuntu 18.04.5 ; 18         ; x86_64         ;
+; Timing Analyzer      ; franz-pc         ; Ubuntu 18.04.5 ; 18         ; x86_64         ;
 +----------------------+------------------+----------------+------------+----------------+
 
 
@@ -152,6 +158,9 @@ https://fpgasoftware.intel.com/eula.
 ; Flow Log ;
 ------------
 quartus_map --read_settings_files=on --write_settings_files=off soc_system -c soc_system
+quartus_fit --read_settings_files=off --write_settings_files=off soc_system -c soc_system
+quartus_asm --read_settings_files=off --write_settings_files=off soc_system -c soc_system
+quartus_sta soc_system -c soc_system
 
 
 
