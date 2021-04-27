@@ -9,7 +9,39 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element avalon_encoder_0
+   {
+      datum _sortIndex
+      {
+         value = "14";
+         type = "int";
+      }
+   }
+   element avalon_encoder_0.avalon_slave_0
+   {
+      datum baseAddress
+      {
+         value = "327680";
+         type = "String";
+      }
+   }
    element avalon_pwm_0
+   {
+      datum _sortIndex
+      {
+         value = "11";
+         type = "int";
+      }
+   }
+   element avalon_pwm_0.avalon_slave_0
+   {
+      datum baseAddress
+      {
+         value = "65560";
+         type = "String";
+      }
+   }
+   element avalon_rpm_0
    {
       datum _sortIndex
       {
@@ -17,7 +49,7 @@
          type = "int";
       }
    }
-   element avalon_pwm_0.avalon_slave_0
+   element avalon_rpm_0.avalon_slave_0
    {
       datum baseAddress
       {
@@ -29,7 +61,7 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "2";
          type = "int";
       }
    }
@@ -50,31 +82,15 @@
    {
       datum _sortIndex
       {
-         value = "9";
+         value = "8";
          type = "int";
-      }
-   }
-   element custom_count_0
-   {
-      datum _sortIndex
-      {
-         value = "12";
-         type = "int";
-      }
-   }
-   element custom_count_0.avalon_slave_0
-   {
-      datum baseAddress
-      {
-         value = "524288";
-         type = "String";
       }
    }
    element custom_leds_0
    {
       datum _sortIndex
       {
-         value = "10";
+         value = "9";
          type = "int";
       }
    }
@@ -90,7 +106,7 @@
    {
       datum _sortIndex
       {
-         value = "11";
+         value = "10";
          type = "int";
       }
    }
@@ -102,11 +118,27 @@
          type = "String";
       }
    }
+   element custom_pwm_0
+   {
+      datum _sortIndex
+      {
+         value = "12";
+         type = "int";
+      }
+   }
+   element custom_pwm_0.avs_s0
+   {
+      datum baseAddress
+      {
+         value = "65536";
+         type = "String";
+      }
+   }
    element dipsw_pio
    {
       datum _sortIndex
       {
-         value = "4";
+         value = "3";
          type = "int";
       }
    }
@@ -135,7 +167,7 @@
    {
       datum _sortIndex
       {
-         value = "7";
+         value = "6";
          type = "int";
       }
    }
@@ -167,7 +199,7 @@
    {
       datum _sortIndex
       {
-         value = "8";
+         value = "7";
          type = "int";
       }
    }
@@ -193,7 +225,7 @@
    {
       datum _sortIndex
       {
-         value = "6";
+         value = "5";
          type = "int";
       }
    }
@@ -214,7 +246,7 @@
    {
       datum _sortIndex
       {
-         value = "5";
+         value = "4";
          type = "int";
       }
    }
@@ -242,27 +274,6 @@
          type = "String";
       }
    }
-   element sysid_qsys
-   {
-      datum _sortIndex
-      {
-         value = "2";
-         type = "int";
-      }
-   }
-   element sysid_qsys.control_slave
-   {
-      datum _lockedAddress
-      {
-         value = "1";
-         type = "boolean";
-      }
-      datum baseAddress
-      {
-         value = "65536";
-         type = "String";
-      }
-   }
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
@@ -285,8 +296,18 @@
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface
+   name="avalon_encoder_0_conduit_end"
+   internal="avalon_encoder_0.conduit_end"
+   type="conduit"
+   dir="end" />
+ <interface
    name="avalon_pwm_0_conduit_end"
    internal="avalon_pwm_0.conduit_end"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="avalon_rpm_0_conduit_end"
+   internal="avalon_rpm_0.conduit_end"
    type="conduit"
    dir="end" />
  <interface
@@ -296,11 +317,6 @@
    dir="end" />
  <interface name="clk" internal="clk_0.clk_in" type="clock" dir="end" />
  <interface
-   name="custom_count_0_count"
-   internal="custom_count_0.count"
-   type="conduit"
-   dir="end" />
- <interface
    name="custom_leds_0_leds"
    internal="custom_leds_0.leds"
    type="conduit"
@@ -308,6 +324,11 @@
  <interface
    name="custom_prescaller_0_prescaller"
    internal="custom_prescaller_0.prescaller"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="custom_pwm_0_pwm_out"
+   internal="custom_pwm_0.PWM_out"
    type="conduit"
    dir="end" />
  <interface
@@ -347,7 +368,13 @@
  <interface name="hps_0_i2c2_scl_in" internal="hps_0.i2c2_scl_in" />
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
+ <module
+   name="avalon_encoder_0"
+   kind="avalon_encoder"
+   version="1.0"
+   enabled="1" />
  <module name="avalon_pwm_0" kind="avalon_pwm" version="1.0" enabled="1" />
+ <module name="avalon_rpm_0" kind="avalon_rpm" version="1.0" enabled="1" />
  <module name="button_pio" kind="altera_avalon_pio" version="19.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="true" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -368,13 +395,13 @@
   <parameter name="inputClockFrequency" value="0" />
   <parameter name="resetSynchronousEdges" value="NONE" />
  </module>
- <module name="custom_count_0" kind="custom_count" version="1.0" enabled="1" />
  <module name="custom_leds_0" kind="custom_leds" version="1.0" enabled="1" />
  <module
    name="custom_prescaller_0"
    kind="custom_prescaller"
    version="1.0"
    enabled="1" />
+ <module name="custom_pwm_0" kind="custom_pwm" version="1.0" enabled="1" />
  <module name="dipsw_pio" kind="altera_avalon_pio" version="19.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="true" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -1006,13 +1033,6 @@
   <parameter name="useShallowMemBlocks" value="false" />
   <parameter name="writable" value="true" />
  </module>
- <module
-   name="sysid_qsys"
-   kind="altera_avalon_sysid_qsys"
-   version="19.1"
-   enabled="1">
-  <parameter name="id" value="-1395322110" />
- </module>
  <connection
    kind="avalon"
    version="19.1"
@@ -1035,18 +1055,27 @@
    kind="avalon"
    version="19.1"
    start="hps_0.h2f_lw_axi_master"
-   end="custom_count_0.avalon_slave_0">
+   end="avalon_pwm_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00080000" />
+  <parameter name="baseAddress" value="0x00010018" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
    kind="avalon"
    version="19.1"
    start="hps_0.h2f_lw_axi_master"
-   end="avalon_pwm_0.avalon_slave_0">
+   end="avalon_rpm_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00040000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="hps_0.h2f_lw_axi_master"
+   end="avalon_encoder_0.avalon_slave_0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00050000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1062,18 +1091,18 @@
    kind="avalon"
    version="19.1"
    start="hps_0.h2f_lw_axi_master"
-   end="custom_prescaller_0.avs_s0">
+   end="custom_pwm_0.avs_s0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010008" />
+  <parameter name="baseAddress" value="0x00010000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
    kind="avalon"
    version="19.1"
    start="hps_0.h2f_lw_axi_master"
-   end="sysid_qsys.control_slave">
+   end="custom_prescaller_0.avs_s0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010000" />
+  <parameter name="baseAddress" value="0x00010008" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1116,18 +1145,27 @@
    kind="avalon"
    version="19.1"
    start="fpga_only_master.master"
-   end="custom_count_0.avalon_slave_0">
+   end="avalon_pwm_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00080000" />
+  <parameter name="baseAddress" value="0x00010018" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
    kind="avalon"
    version="19.1"
    start="fpga_only_master.master"
-   end="avalon_pwm_0.avalon_slave_0">
+   end="avalon_rpm_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00040000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="19.1"
+   start="fpga_only_master.master"
+   end="avalon_encoder_0.avalon_slave_0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00050000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1143,18 +1181,18 @@
    kind="avalon"
    version="19.1"
    start="fpga_only_master.master"
-   end="custom_prescaller_0.avs_s0">
+   end="custom_pwm_0.avs_s0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010008" />
+  <parameter name="baseAddress" value="0x00010000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
    kind="avalon"
    version="19.1"
    start="fpga_only_master.master"
-   end="sysid_qsys.control_slave">
+   end="custom_prescaller_0.avs_s0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010000" />
+  <parameter name="baseAddress" value="0x00010008" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1198,7 +1236,6 @@
    version="19.1"
    start="clk_0.clk"
    end="hps_only_master.clk" />
- <connection kind="clock" version="19.1" start="clk_0.clk" end="sysid_qsys.clk" />
  <connection
    kind="clock"
    version="19.1"
@@ -1226,17 +1263,27 @@
    kind="clock"
    version="19.1"
    start="clk_0.clk"
+   end="avalon_pwm_0.clock" />
+ <connection
+   kind="clock"
+   version="19.1"
+   start="clk_0.clk"
+   end="custom_pwm_0.clock" />
+ <connection
+   kind="clock"
+   version="19.1"
+   start="clk_0.clk"
    end="custom_prescaller_0.clock" />
  <connection
    kind="clock"
    version="19.1"
    start="clk_0.clk"
-   end="custom_count_0.clock" />
+   end="avalon_rpm_0.clock" />
  <connection
    kind="clock"
    version="19.1"
    start="clk_0.clk"
-   end="avalon_pwm_0.clock" />
+   end="avalon_encoder_0.clock" />
  <connection
    kind="clock"
    version="19.1"
@@ -1308,11 +1355,6 @@
    kind="reset"
    version="19.1"
    start="clk_0.clk_reset"
-   end="sysid_qsys.reset" />
- <connection
-   kind="reset"
-   version="19.1"
-   start="clk_0.clk_reset"
    end="dipsw_pio.reset" />
  <connection
    kind="reset"
@@ -1333,17 +1375,27 @@
    kind="reset"
    version="19.1"
    start="clk_0.clk_reset"
+   end="avalon_pwm_0.reset" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="clk_0.clk_reset"
+   end="custom_pwm_0.reset" />
+ <connection
+   kind="reset"
+   version="19.1"
+   start="clk_0.clk_reset"
    end="custom_prescaller_0.reset" />
  <connection
    kind="reset"
    version="19.1"
    start="clk_0.clk_reset"
-   end="custom_count_0.reset" />
+   end="avalon_rpm_0.reset" />
  <connection
    kind="reset"
    version="19.1"
    start="clk_0.clk_reset"
-   end="avalon_pwm_0.reset" />
+   end="avalon_encoder_0.reset" />
  <connection
    kind="reset"
    version="19.1"

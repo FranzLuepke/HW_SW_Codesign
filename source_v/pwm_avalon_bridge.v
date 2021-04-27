@@ -16,7 +16,6 @@ module pwm_avalon_bridge (
 	// these are the pwm ports
 	output [NUMBER_OF_MOTORS-1:0] PWM
 );
-
 parameter NUMBER_OF_MOTORS = 6;
 parameter CLOCK_SPEED_HZ = 50_000_000;
 parameter PWM_FREQ = 20_000;
@@ -60,5 +59,4 @@ generate
 		);
 	end
 endgenerate 
-
 endmodule

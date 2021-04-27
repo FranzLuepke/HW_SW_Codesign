@@ -1,10 +1,12 @@
 	component soc_system is
 		port (
+			avalon_pwm_0_conduit_end_new_signal       : in    std_logic_vector(7 downto 0)  := (others => 'X'); -- new_signal
+			avalon_rpm_0_conduit_end_new_signal       : in    std_logic_vector(15 downto 0) := (others => 'X'); -- new_signal
 			button_pio_external_connection_export     : in    std_logic_vector(3 downto 0)  := (others => 'X'); -- export
 			clk_clk                                   : in    std_logic                     := 'X';             -- clk
-			custom_count_0_count_new_signal           : in    std_logic_vector(31 downto 0) := (others => 'X'); -- new_signal
 			custom_leds_0_leds_new_signal             : out   std_logic_vector(7 downto 0);                     -- new_signal
 			custom_prescaller_0_prescaller_new_signal : out   std_logic_vector(27 downto 0);                    -- new_signal
+			custom_pwm_0_pwm_out_new_signal           : out   std_logic_vector(7 downto 0);                     -- new_signal
 			dipsw_pio_external_connection_export      : in    std_logic_vector(3 downto 0)  := (others => 'X'); -- export
 			hps_0_f2h_cold_reset_req_reset_n          : in    std_logic                     := 'X';             -- reset_n
 			hps_0_f2h_debug_reset_req_reset_n         : in    std_logic                     := 'X';             -- reset_n
@@ -76,17 +78,19 @@
 			memory_mem_dm                             : out   std_logic_vector(3 downto 0);                     -- mem_dm
 			memory_oct_rzqin                          : in    std_logic                     := 'X';             -- oct_rzqin
 			reset_reset_n                             : in    std_logic                     := 'X';             -- reset_n
-			avalon_pwm_0_conduit_end_new_signal       : in    std_logic_vector(7 downto 0)  := (others => 'X')  -- new_signal
+			avalon_encoder_0_conduit_end_new_signal   : in    std_logic_vector(31 downto 0) := (others => 'X')  -- new_signal
 		);
 	end component soc_system;
 
 	u0 : component soc_system
 		port map (
+			avalon_pwm_0_conduit_end_new_signal       => CONNECTED_TO_avalon_pwm_0_conduit_end_new_signal,       --       avalon_pwm_0_conduit_end.new_signal
+			avalon_rpm_0_conduit_end_new_signal       => CONNECTED_TO_avalon_rpm_0_conduit_end_new_signal,       --       avalon_rpm_0_conduit_end.new_signal
 			button_pio_external_connection_export     => CONNECTED_TO_button_pio_external_connection_export,     -- button_pio_external_connection.export
 			clk_clk                                   => CONNECTED_TO_clk_clk,                                   --                            clk.clk
-			custom_count_0_count_new_signal           => CONNECTED_TO_custom_count_0_count_new_signal,           --           custom_count_0_count.new_signal
 			custom_leds_0_leds_new_signal             => CONNECTED_TO_custom_leds_0_leds_new_signal,             --             custom_leds_0_leds.new_signal
 			custom_prescaller_0_prescaller_new_signal => CONNECTED_TO_custom_prescaller_0_prescaller_new_signal, -- custom_prescaller_0_prescaller.new_signal
+			custom_pwm_0_pwm_out_new_signal           => CONNECTED_TO_custom_pwm_0_pwm_out_new_signal,           --           custom_pwm_0_pwm_out.new_signal
 			dipsw_pio_external_connection_export      => CONNECTED_TO_dipsw_pio_external_connection_export,      --  dipsw_pio_external_connection.export
 			hps_0_f2h_cold_reset_req_reset_n          => CONNECTED_TO_hps_0_f2h_cold_reset_req_reset_n,          --       hps_0_f2h_cold_reset_req.reset_n
 			hps_0_f2h_debug_reset_req_reset_n         => CONNECTED_TO_hps_0_f2h_debug_reset_req_reset_n,         --      hps_0_f2h_debug_reset_req.reset_n
@@ -158,6 +162,6 @@
 			memory_mem_dm                             => CONNECTED_TO_memory_mem_dm,                             --                               .mem_dm
 			memory_oct_rzqin                          => CONNECTED_TO_memory_oct_rzqin,                          --                               .oct_rzqin
 			reset_reset_n                             => CONNECTED_TO_reset_reset_n,                             --                          reset.reset_n
-			avalon_pwm_0_conduit_end_new_signal       => CONNECTED_TO_avalon_pwm_0_conduit_end_new_signal        --       avalon_pwm_0_conduit_end.new_signal
+			avalon_encoder_0_conduit_end_new_signal   => CONNECTED_TO_avalon_encoder_0_conduit_end_new_signal    --   avalon_encoder_0_conduit_end.new_signal
 		);
 

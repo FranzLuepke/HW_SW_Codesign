@@ -47,4 +47,4 @@ __attribute__((section(".modinfo"))) =
 MODULE_ALIAS("of:N*T*Cdev,custom-pwm");
 MODULE_ALIAS("of:N*T*Cdev,custom-pwmC*");
 
-MODULE_INFO(srcversion, "947995FE0BF1B60673EFB1A");
+MODULE_INFO(srcversion, "827F76585422DE8413CB8E0");

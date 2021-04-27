@@ -54,17 +54,15 @@
 #define ONCHIP_MEMORY2_0_MEMORY_INFO_MEM_INIT_FILENAME soc_system_onchip_memory2_0
 
 /*
- * Macros for device 'sysid_qsys', class 'altera_avalon_sysid_qsys'
- * The macros are prefixed with 'SYSID_QSYS_'.
+ * Macros for device 'custom_pwm_0', class 'custom_pwm'
+ * The macros are prefixed with 'CUSTOM_PWM_0_'.
  * The prefix is the slave descriptor.
  */
-#define SYSID_QSYS_COMPONENT_TYPE altera_avalon_sysid_qsys
-#define SYSID_QSYS_COMPONENT_NAME sysid_qsys
-#define SYSID_QSYS_BASE 0x10000
-#define SYSID_QSYS_SPAN 8
-#define SYSID_QSYS_END 0x10007
-#define SYSID_QSYS_ID 2899645186
-#define SYSID_QSYS_TIMESTAMP 1618348194
+#define CUSTOM_PWM_0_COMPONENT_TYPE custom_pwm
+#define CUSTOM_PWM_0_COMPONENT_NAME custom_pwm_0
+#define CUSTOM_PWM_0_BASE 0x10000
+#define CUSTOM_PWM_0_SPAN 8
+#define CUSTOM_PWM_0_END 0x10007
 
 /*
  * Macros for device 'custom_prescaller_0', class 'custom_prescaller'
@@ -87,6 +85,17 @@
 #define CUSTOM_LEDS_0_BASE 0x10010
 #define CUSTOM_LEDS_0_SPAN 8
 #define CUSTOM_LEDS_0_END 0x10017
+
+/*
+ * Macros for device 'avalon_pwm_0', class 'avalon_pwm'
+ * The macros are prefixed with 'AVALON_PWM_0_'.
+ * The prefix is the slave descriptor.
+ */
+#define AVALON_PWM_0_COMPONENT_TYPE avalon_pwm
+#define AVALON_PWM_0_COMPONENT_NAME avalon_pwm_0
+#define AVALON_PWM_0_BASE 0x10018
+#define AVALON_PWM_0_SPAN 8
+#define AVALON_PWM_0_END 0x1001f
 
 /*
  * Macros for device 'dipsw_pio', class 'altera_avalon_pio'
@@ -155,15 +164,15 @@
 #define JTAG_UART_WRITE_THRESHOLD 8
 
 /*
- * Macros for device 'avalon_pwm_0', class 'avalon_pwm'
- * The macros are prefixed with 'AVALON_PWM_0_'.
+ * Macros for device 'avalon_rpm_0', class 'avalon_rpm'
+ * The macros are prefixed with 'AVALON_RPM_0_'.
  * The prefix is the slave descriptor.
  */
-#define AVALON_PWM_0_COMPONENT_TYPE avalon_pwm
-#define AVALON_PWM_0_COMPONENT_NAME avalon_pwm_0
-#define AVALON_PWM_0_BASE 0x40000
-#define AVALON_PWM_0_SPAN 262144
-#define AVALON_PWM_0_END 0x7ffff
+#define AVALON_RPM_0_COMPONENT_TYPE avalon_rpm
+#define AVALON_RPM_0_COMPONENT_NAME avalon_rpm_0
+#define AVALON_RPM_0_BASE 0x40000
+#define AVALON_RPM_0_SPAN 262144
+#define AVALON_RPM_0_END 0x7ffff
 
 /*
  * Macros for device 'custom_count_0', class 'custom_count'

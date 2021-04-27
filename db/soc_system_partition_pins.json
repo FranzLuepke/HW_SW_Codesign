@@ -36,7 +36,7 @@
 					"strict" : false
 				},
 				{
-					"name" : "ARDUINO_IO[9]",
+					"name" : "GPIO_1[2]",
 					"strict" : false
 				},
 				{

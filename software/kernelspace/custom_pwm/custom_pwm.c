@@ -9,7 +9,8 @@
 // Variables
 static short procfs_buffer_size = 0;
 static int number_devices = 0;
-static char *arr[] = { "custom_pwm_1", "custom_pwm_2"};
+// static char *arr[] = { "custom_pwm_1", "custom_pwm_2"};
+static char *arr[] = { "custom_pwm"};
 // Prototypes
 static int dev_open(struct inode *, struct file *);
 static int dev_release(struct inode *, struct file *);

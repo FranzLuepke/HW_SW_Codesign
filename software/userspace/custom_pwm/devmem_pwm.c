@@ -15,23 +15,23 @@ int main(int argc, char ** argv)
 {
     void * lw_bridge_map = 0;
     uint32_t * custom_pwm_0_map = 0;
-    uint32_t * custom_pwm_1_map = 0;
+    // uint32_t * custom_pwm_1_map = 0;
     int devmem_fd = 0;
     int result = 0;
     int steps = 0;
-    int steps2 = 0;
+    // int steps2 = 0;
     int max_pwm = 250; // Value that makes a 100% duty cycle in the PWM.
-    int time_steps = 5000; // Time between steps. (in us)
+    int time_steps = 50000; // Time between steps. (in us)
 
     // Check to make sure they entered a valid input value
-    if(argc != 3)
+    if(argc != 2)
     {
         printf("Please enter only one argument that specifies the number of step for the PWM sweep.\n");
         exit(EXIT_FAILURE);
     }
     // Get the steps from the PWM sweep from the passed in arguments
     steps = atoi(argv[1]);
-    steps2 = atoi(argv[2]);
+    // steps2 = atoi(argv[2]);
 
     // // Get the number of times to blink the LEDS from the passed in arguments
     // blink_times = atoi(argv[1]);
@@ -55,7 +55,7 @@ int main(int argc, char ** argv)
 
     // Set the custom_pwm_map to the correct offset within the RAM (CUSTOM_PWM_0_BASE is from "hps_0.h")
     custom_pwm_0_map = (uint32_t*)(lw_bridge_map + CUSTOM_PWM_0_BASE);
-    custom_pwm_1_map = (uint32_t*)(lw_bridge_map + CUSTOM_PWM_1_BASE);
+    // custom_pwm_1_map = (uint32_t*)(lw_bridge_map + CUSTOM_PWM_1_BASE);
     printf("The number of steps selected are: %d\n", steps);
     // Change PWM
     printf("Changing PWM from 0 to 100 and back to 0...\n");
@@ -64,28 +64,28 @@ int main(int argc, char ** argv)
     // // Wait 2 seconds
     // usleep(20000s00);
 
-    // printf(" Sweep Up...\n");
-    // for(int i = 0; i < steps+1; ++i)
-    // {
-    //     *custom_pwm_0_map = (i*max_pwm)/steps;
-    //     *custom_pwm_1_map = (i*max_pwm)/steps;
-    //     // *custom_pwm_map = 253;
-    //     // Wait time_steps seconds
-    //     usleep(time_steps);
-    // }
-    // usleep(2000000);
-    // printf(" Sweep Down...\n");
-    // for(int i = steps-1; i > -1; --i)
-    // {
-    //     *custom_pwm_0_map = (i*max_pwm)/steps;
-    //     // *custom_pwm_map = 253;
-    //     // Wait time_steps seconds
-    //     usleep(time_steps);
-    // }
-    // printf("Done!\n");
+    printf(" Sweep Up...\n");
+    for(int i = 0; i < steps+1; ++i)
+    {
+        *custom_pwm_0_map = (i*max_pwm)/steps;
+        // *custom_pwm_1_map = (i*max_pwm)/steps;
+        // *custom_pwm_map = 253;
+        // Wait time_steps seconds
+        usleep(time_steps);
+    }
+    usleep(2000000);
+    printf(" Sweep Down...\n");
+    for(int i = steps-1; i > -1; --i)
+    {
+        *custom_pwm_0_map = (i*max_pwm)/steps;
+        // *custom_pwm_map = 253;
+        // Wait time_steps seconds
+        usleep(time_steps);
+    }
+    printf("Done!\n");
 
-    *custom_pwm_0_map = steps;
-    *custom_pwm_1_map = steps2;
+    // *custom_pwm_0_map = steps;
+    // *custom_pwm_1_map = steps2;
 
     // Unmap everything and close the /dev/mem file descriptor
     result = munmap(lw_bridge_map, HPS_TO_FPGA_LW_SPAN); 

@@ -127,55 +127,51 @@ module ghrd(
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================
-  wire  hps_fpga_reset_n;
-  wire [1:0] fpga_debounced_buttons;
-  wire [6:0]  fpga_led_internal;
-  wire [2:0]  hps_reset_req;
-  wire        hps_cold_reset;
-  wire        hps_warm_reset;
-  wire        hps_debug_reset;
-  wire [27:0] stm_hw_events;
-  wire 		  fpga_clk_50;
-// connection of internal logics
-  assign LED[7:1] = fpga_led_internal;
-  assign fpga_clk_50=FPGA_CLK1_50;
-  assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
-  
+  wire			hps_fpga_reset_n;
+  wire [1:0]	fpga_debounced_buttons;
+  wire [6:0] 	fpga_led_internal;
+  wire [2:0]	hps_reset_req;
+  wire			hps_cold_reset;
+  wire			hps_warm_reset;
+  wire			hps_debug_reset;
+  wire [27:0]	stm_hw_events;
+  wire			fpga_clk_50;
+  // connection of internal logics
+  assign			LED[7:1]			= fpga_led_internal; // HPS to LED
+  assign			fpga_clk_50		= FPGA_CLK1_50;
+  assign			stm_hw_events	= {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
   // ROBOCOL CONNECTIONS
   wire [27:0]	count;		// Prescaler value.
   wire			CLK_scaled; // Output clock.
+  wire [7:0]	PWM_IN_1;
   wire [7:0]	PWM_DATA_1, PWM_DATA_2, PWM_DATA_3, PWM_DATA_4, PWM_DATA_5, PWM_DATA_6;
   wire [7:0]	PWM_DATA;
-  // i2c connection
-  wire scl_o_e;
-  wire scl_o;
-  wire sda_o_e;
-  wire sda_o; 
-  
+  // I2C connection
+  wire			scl_o_e;
+  wire			scl_o;
+  wire			sda_o_e;
+  wire			sda_o;
 //=======================================================
 //  Structural coding
 //=======================================================
 // Prescaller
-Prescaller prescaller_0(!KEY[0], FPGA_CLK1_50, CLK_scaled, count);
+Prescaller prescaller_0(!KEY[0], FPGA_CLK1_50, CLK_scaled, count); // CON AVALON
+//Prescaller prescaller_0(!KEY[0], FPGA_CLK1_50, CLK_scaled, 125000);
 assign GPIO_0[0] = CLK_scaled;
 // PWM generators (control signal generation with PWM)
-assign ARDUINO_IO[2]=0;
-assign ARDUINO_IO[4]=1;
-assign ARDUINO_IO[6]=1;
-assign ARDUINO_IO[7]=0;
-assign ARDUINO_IO[8]=0;
-assign ARDUINO_IO[10]=0;
-assign ARDUINO_IO[12]=0;
+assign ARDUINO_IO[2]		=	0;
+assign ARDUINO_IO[4]		=	1;
+assign ARDUINO_IO[6]		=	1;
+assign ARDUINO_IO[7]		=	0;
+assign ARDUINO_IO[8]		=	0;
+assign ARDUINO_IO[10]	=	0;
+assign ARDUINO_IO[12]	=	0;
 
-PWM_Generator PWM_1(!KEY[0], FPGA_CLK1_50, PWM_DATA_1, ARDUINO_IO[9]);
-//PWM_Generator PWM_2(!KEY[0], FPGA_CLK1_50, PWM_DATA_2, GPIO_0[2]);
-//PWM_Generator PWM_3(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[3]);
-//PWM_Generator PWM_4(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[4]);
-//PWM_Generator PWM_5(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[5]);
-//PWM_Generator PWM_6(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[6]);
+assign ARDUINO_IO[12]	=	0;
 
-ALT_IOBUF scl_iobuf (.i(1'b0), .oe(scl_o_e), .o(scl_o), .io(GPIO_1[0])); //declared bi-directional buffer for scl
-ALT_IOBUF sda_iobuf (.i(1'b0), .oe(sda_o_e), .o(sda_o), .io(GPIO_1[1])); //declared bi-directional buffer for sda
+
+//ALT_IOBUF scl_iobuf (.i(1'b0), .oe(scl_o_e), .o(scl_o), .io(GPIO_1[1])); //declared bi-directional buffer for scl
+//ALT_IOBUF sda_iobuf (.i(1'b0), .oe(sda_o_e), .o(sda_o), .io(GPIO_1[2])); //declared bi-directional buffer for sda
 
 // ENCODERS
 // DEBOUNCERS ENCODERS //
@@ -189,114 +185,144 @@ wire signed [31:0] Count1, Count2, Count3, Count4, Count5, Count6;
 Encoder Encoder1(FPGA_CLK1_50, DB1_A, DB1_B, Count1);
 
 //wire [5:0] PWM;
-
 //assign PWM[0] =  ARDUINO_IO[9];
 
+// Wires for RPM measurement
+wire signed [15:0] RPM_MEDIDO1, RPM_MEDIDO2, RPM_MEDIDO3, RPM_MEDIDO4, RPM_MEDIDO5, RPM_MEDIDO6;
+// RPM measurements from encoder signals (derivative using 5ms as h)
+RPM RPM1(CLK_scaled, Count1, RPM_MEDIDO1);
+//RPM RPM2(CLK_scaled, Count2, RPM_MEDIDO2);
+//RPM RPM3(CLK_scaled, Count3, RPM_MEDIDO3);
+//RPM RPM4(CLK_scaled, Count4, RPM_MEDIDO4);
+//RPM RPM5(CLK_scaled, Count5, RPM_MEDIDO5);
+//RPM RPM6(CLK_scaled, Count6, RPM_MEDIDO6);
+
+// PID controllers for RPM
+//PID_control PID_control1(CLK_scaled, $signed($signed({8'b0,PWM_IN_1})*$signed(1'b1)),  RPM_MEDIDO1, GPIO_0[18], GPIO_0[19], PWM_DATA_1);
+//PID_control PID_control2(CLK_scaled, $signed($signed({8'b0,RPM_L})*$signed(DIR_L)),  RPM_MEDIDO2, GPIO_0GPIO[20], GPIO_0GPIO[21], PWM_DATA2);
+//PID_control PID_control3(CLK_scaled, $signed($signed({8'b0,RPM_L})*$signed(DIR_L)),  RPM_MEDIDO3, GPIO_0GPIO[22], GPIO_0GPIO[23], PWM_DATA3);
+//PID_control PID_control4(CLK_scaled, $signed($signed({8'b0,RPM_R})*$signed(DIR_R)), -RPM_MEDIDO4, GPIO_0GPIO[24], GPIO_0GPIO[25], PWM_DATA4);
+//PID_control PID_control5(CLK_scaled, $signed($signed({8'b0,RPM_R})*$signed(DIR_R)), -RPM_MEDIDO5, GPIO_0GPIO[26], GPIO_0GPIO[27], PWM_DATA5);
+//PID_control PID_control6(CLK_scaled, $signed($signed({8'b0,RPM_R})*$signed(DIR_R)), -RPM_MEDIDO6, GPIO_0GPIO[28], GPIO_0GPIO[29], PWM_DATA6);
+
+PWM_Generator PWM_1(FPGA_CLK1_50, !KEY[0], PWM_IN_1, GPIO_1[2]);
+//PWM_Generator PWM_2(!KEY[0], FPGA_CLK1_50, PWM_DATA_2, GPIO_0[2]);
+//PWM_Generator PWM_3(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[3]);
+//PWM_Generator PWM_4(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[4]);
+//PWM_Generator PWM_5(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[5]);
+//PWM_Generator PWM_6(!KEY[0], FPGA_CLK1_50, PWM_DATA, GPIO_0[6]);
+
+//assign	LED[7:0] = PWM_IN_1; // PWM in to LEDs
+
+
  soc_system u0 (
-		//Clock&Reset
-	  .clk_clk                               (FPGA_CLK1_50 ),				//	clk.clk
-	  .reset_reset_n                         (hps_fpga_reset_n ),			//	reset.reset_n
-	  //HPS ddr3
-	  .memory_mem_a                          ( HPS_DDR3_ADDR),				//	memory.mem_a
-	  .memory_mem_ba                         ( HPS_DDR3_BA),					//	.mem_ba
-	  .memory_mem_ck                         ( HPS_DDR3_CK_P),				//	.mem_ck
-	  .memory_mem_ck_n                       ( HPS_DDR3_CK_N),				//	.mem_ck_n
-	  .memory_mem_cke                        ( HPS_DDR3_CKE),				//	.mem_cke
-	  .memory_mem_cs_n                       ( HPS_DDR3_CS_N),				//	.mem_cs_n
-	  .memory_mem_ras_n                      ( HPS_DDR3_RAS_N),				//	.mem_ras_n
-	  .memory_mem_cas_n                      ( HPS_DDR3_CAS_N),				//	.mem_cas_n
-	  .memory_mem_we_n                       ( HPS_DDR3_WE_N),				//	.mem_we_n
-	  .memory_mem_reset_n                    ( HPS_DDR3_RESET_N),			//	.mem_reset_n
-	  .memory_mem_dq                         ( HPS_DDR3_DQ),					//	.mem_dq
-	  .memory_mem_dqs                        ( HPS_DDR3_DQS_P),				//	.mem_dqs
-	  .memory_mem_dqs_n                      ( HPS_DDR3_DQS_N),				//	.mem_dqs_n
-	  .memory_mem_odt                        ( HPS_DDR3_ODT),				//	.mem_odt
-	  .memory_mem_dm                         ( HPS_DDR3_DM),					//	.mem_dm
-	  .memory_oct_rzqin                      ( HPS_DDR3_RZQ),				//	.oct_rzqin                                  
-	  //HPS ethernet		
-	  .hps_0_hps_io_hps_io_emac1_inst_TX_CLK ( HPS_ENET_GTX_CLK),       	//	hps_0_hps_io.hps_io_emac1_inst_TX_CLK
-	  .hps_0_hps_io_hps_io_emac1_inst_TXD0   ( HPS_ENET_TX_DATA[0] ),   	//	.hps_io_emac1_inst_TXD0
-	  .hps_0_hps_io_hps_io_emac1_inst_TXD1   ( HPS_ENET_TX_DATA[1] ),   	//	.hps_io_emac1_inst_TXD1
-	  .hps_0_hps_io_hps_io_emac1_inst_TXD2   ( HPS_ENET_TX_DATA[2] ),   	//	.hps_io_emac1_inst_TXD2
-	  .hps_0_hps_io_hps_io_emac1_inst_TXD3   ( HPS_ENET_TX_DATA[3] ),   	//	.hps_io_emac1_inst_TXD3
-	  .hps_0_hps_io_hps_io_emac1_inst_RXD0   ( HPS_ENET_RX_DATA[0] ),   	//	.hps_io_emac1_inst_RXD0
-	  .hps_0_hps_io_hps_io_emac1_inst_MDIO   ( HPS_ENET_MDIO ),         	//	.hps_io_emac1_inst_MDIO
-	  .hps_0_hps_io_hps_io_emac1_inst_MDC    ( HPS_ENET_MDC  ),         	//	.hps_io_emac1_inst_MDC
-	  .hps_0_hps_io_hps_io_emac1_inst_RX_CTL ( HPS_ENET_RX_DV),         	//	.hps_io_emac1_inst_RX_CTL
-	  .hps_0_hps_io_hps_io_emac1_inst_TX_CTL ( HPS_ENET_TX_EN),         	//	.hps_io_emac1_inst_TX_CTL
-	  .hps_0_hps_io_hps_io_emac1_inst_RX_CLK ( HPS_ENET_RX_CLK),        	//	.hps_io_emac1_inst_RX_CLK
-	  .hps_0_hps_io_hps_io_emac1_inst_RXD1   ( HPS_ENET_RX_DATA[1] ),   	//	.hps_io_emac1_inst_RXD1
-	  .hps_0_hps_io_hps_io_emac1_inst_RXD2   ( HPS_ENET_RX_DATA[2] ),   	//	.hps_io_emac1_inst_RXD2
-	  .hps_0_hps_io_hps_io_emac1_inst_RXD3   ( HPS_ENET_RX_DATA[3] ),		//	.hps_io_emac1_inst_RXD3		  
-	  //HPS SD card
-	  .hps_0_hps_io_hps_io_sdio_inst_CMD     ( HPS_SD_CMD    ),				//	.hps_io_sdio_inst_CMD
-	  .hps_0_hps_io_hps_io_sdio_inst_D0      ( HPS_SD_DATA[0]     ),		//	.hps_io_sdio_inst_D0
-	  .hps_0_hps_io_hps_io_sdio_inst_D1      ( HPS_SD_DATA[1]     ),		//	.hps_io_sdio_inst_D1
-	  .hps_0_hps_io_hps_io_sdio_inst_CLK     ( HPS_SD_CLK   ),				//	.hps_io_sdio_inst_CLK
-	  .hps_0_hps_io_hps_io_sdio_inst_D2      ( HPS_SD_DATA[2]     ),		//	.hps_io_sdio_inst_D2
-	  .hps_0_hps_io_hps_io_sdio_inst_D3      ( HPS_SD_DATA[3]     ),		//	.hps_io_sdio_inst_D3
-	  //HPS USB
-	  .hps_0_hps_io_hps_io_usb1_inst_D0      ( HPS_USB_DATA[0]    ),		//	.hps_io_usb1_inst_D0
-	  .hps_0_hps_io_hps_io_usb1_inst_D1      ( HPS_USB_DATA[1]    ),		//	.hps_io_usb1_inst_D1
-	  .hps_0_hps_io_hps_io_usb1_inst_D2      ( HPS_USB_DATA[2]    ),		//	.hps_io_usb1_inst_D2
-	  .hps_0_hps_io_hps_io_usb1_inst_D3      ( HPS_USB_DATA[3]    ),		//	.hps_io_usb1_inst_D3
-	  .hps_0_hps_io_hps_io_usb1_inst_D4      ( HPS_USB_DATA[4]    ),		//	.hps_io_usb1_inst_D4
-	  .hps_0_hps_io_hps_io_usb1_inst_D5      ( HPS_USB_DATA[5]    ),		//	.hps_io_usb1_inst_D5
-	  .hps_0_hps_io_hps_io_usb1_inst_D6      ( HPS_USB_DATA[6]    ),		//	.hps_io_usb1_inst_D6
-	  .hps_0_hps_io_hps_io_usb1_inst_D7      ( HPS_USB_DATA[7]    ),		//	.hps_io_usb1_inst_D7
-	  .hps_0_hps_io_hps_io_usb1_inst_CLK     ( HPS_USB_CLKOUT    ),		//	.hps_io_usb1_inst_CLK
-	  .hps_0_hps_io_hps_io_usb1_inst_STP     ( HPS_USB_STP    ),			//	.hps_io_usb1_inst_STP
-	  .hps_0_hps_io_hps_io_usb1_inst_DIR     ( HPS_USB_DIR    ),			//	.hps_io_usb1_inst_DIR
-	  .hps_0_hps_io_hps_io_usb1_inst_NXT     ( HPS_USB_NXT    ),			//	.hps_io_usb1_inst_NXT
-		//HPS SPI 		  
-	  .hps_0_hps_io_hps_io_spim1_inst_CLK    ( HPS_SPIM_CLK  ),				//	.hps_io_spim1_inst_CLK
-	  .hps_0_hps_io_hps_io_spim1_inst_MOSI   ( HPS_SPIM_MOSI ),				//	.hps_io_spim1_inst_MOSI
-	  .hps_0_hps_io_hps_io_spim1_inst_MISO   ( HPS_SPIM_MISO ),				//	.hps_io_spim1_inst_MISO
-	  .hps_0_hps_io_hps_io_spim1_inst_SS0    ( HPS_SPIM_SS   ),				//	.hps_io_spim1_inst_SS0
-		//HPS UART		
-	  .hps_0_hps_io_hps_io_uart0_inst_RX     ( HPS_UART_RX   ),          //	.hps_io_uart0_inst_RX
-	  .hps_0_hps_io_hps_io_uart0_inst_TX     ( HPS_UART_TX   ),          //	.hps_io_uart0_inst_TX
-		//HPS I2C1
-	  .hps_0_hps_io_hps_io_i2c0_inst_SDA     ( HPS_I2C0_SDAT  ),			//	.hps_io_i2c0_inst_SDA
-	  .hps_0_hps_io_hps_io_i2c0_inst_SCL     ( HPS_I2C0_SCLK  ),			//	.hps_io_i2c0_inst_SCL
-		//HPS I2C2
-	  .hps_0_hps_io_hps_io_i2c1_inst_SDA     ( HPS_I2C1_SDAT  ),			//	.hps_io_i2c1_inst_SDA
-	  .hps_0_hps_io_hps_io_i2c1_inst_SCL     ( HPS_I2C1_SCLK  ),			//	.hps_io_i2c1_inst_SCL
-		//GPIO 
-	  .hps_0_hps_io_hps_io_gpio_inst_GPIO09  ( HPS_CONV_USB_N ),			//	.hps_io_gpio_inst_GPIO09
-	  .hps_0_hps_io_hps_io_gpio_inst_GPIO35  ( HPS_ENET_INT_N ),			//	.hps_io_gpio_inst_GPIO35
-	  .hps_0_hps_io_hps_io_gpio_inst_GPIO40  ( HPS_LTC_GPIO   ),			//	.hps_io_gpio_inst_GPIO40
-	  .hps_0_hps_io_hps_io_gpio_inst_GPIO53  ( HPS_LED   ),					//	.hps_io_gpio_inst_GPIO53
-	  .hps_0_hps_io_hps_io_gpio_inst_GPIO54  ( HPS_KEY   ),					//	.hps_io_gpio_inst_GPIO54
-	  .hps_0_hps_io_hps_io_gpio_inst_GPIO61  ( HPS_GSENSOR_INT ),			//	.hps_io_gpio_inst_GPIO61
-		//FPGA Partion
-	  .custom_leds_0_leds_new_signal    ( fpga_led_internal 	),				//	led_pio_external_connection.export
-	  .dipsw_pio_external_connection_export  ( SW	),							//	dipsw_pio_external_connection.export
-	  .button_pio_external_connection_export ( fpga_debounced_buttons	),	//	button_pio_external_connection.export
-	  
-	  .hps_0_h2f_reset_reset_n               ( hps_fpga_reset_n ),			//	hps_0_h2f_reset.reset_n
-	  .hps_0_f2h_cold_reset_req_reset_n      (~hps_cold_reset ),			//	hps_0_f2h_cold_reset_req.reset_n
-     .hps_0_f2h_debug_reset_req_reset_n     (~hps_debug_reset ),			//	hps_0_f2h_debug_reset_req.reset_n
-     .hps_0_f2h_stm_hw_events_stm_hwevents  (stm_hw_events ),				//	hps_0_f2h_stm_hw_events.stm_hwevents
-     .hps_0_f2h_warm_reset_req_reset_n      (~hps_warm_reset ),			//	hps_0_f2h_warm_reset_req.reset_n
-	  
-	  .custom_prescaller_0_prescaller_new_signal (count),						// custom_prescaller_0_prescaller.new_signal
-	  
-	  //.custom_pwm_0_pwm_out_new_signal           (PWM_DATA_1),				//	custom_pwm_0_pwm_out.new_signal
-	  //.custom_pwm_1_pwm_out_new_signal           (PWM_DATA_2),				//	custom_pwm_1_pwm_out.new_signal
-	  
-	  // I2C interface from HPS export to FPGA
-	  //.hps_0_i2c2_scl_in_clk                     (scl_o),						//	hps_0_i2c2_scl_in.clk
-	  //.hps_0_i2c2_clk_clk                        (scl_o_e),					//	hps_0_i2c2_clk.clk
-	  //.hps_0_i2c2_out_data                       (sda_o_e),					//	hps_0_i2c2.out_data
-	  //.hps_0_i2c2_sda                            (sda_o),						//	.sda
-	  
-	  // Prescaller count test
-	  //.count_0_external_connection_export        (Count1),					//	count_0_external_connection.export
-	  .custom_count_0_count_new_signal           (Count1),					//	custom_count_0_count.new_signal
-	  
-	  .avalon_pwm_0_conduit_end_new_signal       (PWM_DATA_1)				//	avalon_pwm_0_conduit_end.new_signal
+	//Clock&Reset
+	.clk_clk                               (FPGA_CLK1_50 ),				//	clk.clk
+	.reset_reset_n                         (hps_fpga_reset_n ),			//	reset.reset_n
+	//HPS ddr3
+	.memory_mem_a                          ( HPS_DDR3_ADDR),				//	memory.mem_a
+	.memory_mem_ba                         ( HPS_DDR3_BA),				//	.mem_ba
+	.memory_mem_ck                         ( HPS_DDR3_CK_P),				//	.mem_ck
+	.memory_mem_ck_n                       ( HPS_DDR3_CK_N),				//	.mem_ck_n
+	.memory_mem_cke                        ( HPS_DDR3_CKE),				//	.mem_cke
+	.memory_mem_cs_n                       ( HPS_DDR3_CS_N),				//	.mem_cs_n
+	.memory_mem_ras_n                      ( HPS_DDR3_RAS_N),			//	.mem_ras_n
+	.memory_mem_cas_n                      ( HPS_DDR3_CAS_N),			//	.mem_cas_n
+	.memory_mem_we_n                       ( HPS_DDR3_WE_N),				//	.mem_we_n
+	.memory_mem_reset_n                    ( HPS_DDR3_RESET_N),			//	.mem_reset_n
+	.memory_mem_dq                         ( HPS_DDR3_DQ),				//	.mem_dq
+	.memory_mem_dqs                        ( HPS_DDR3_DQS_P),			//	.mem_dqs
+	.memory_mem_dqs_n                      ( HPS_DDR3_DQS_N),			//	.mem_dqs_n
+	.memory_mem_odt                        ( HPS_DDR3_ODT),				//	.mem_odt
+	.memory_mem_dm                         ( HPS_DDR3_DM),				//	.mem_dm
+	.memory_oct_rzqin                      ( HPS_DDR3_RZQ),				//	.oct_rzqin                                  
+	//HPS ethernet		
+	.hps_0_hps_io_hps_io_emac1_inst_TX_CLK ( HPS_ENET_GTX_CLK),			//	hps_0_hps_io.hps_io_emac1_inst_TX_CLK
+	.hps_0_hps_io_hps_io_emac1_inst_TXD0   ( HPS_ENET_TX_DATA[0] ),	//	.hps_io_emac1_inst_TXD0
+	.hps_0_hps_io_hps_io_emac1_inst_TXD1   ( HPS_ENET_TX_DATA[1] ),	//	.hps_io_emac1_inst_TXD1
+	.hps_0_hps_io_hps_io_emac1_inst_TXD2   ( HPS_ENET_TX_DATA[2] ),	//	.hps_io_emac1_inst_TXD2
+	.hps_0_hps_io_hps_io_emac1_inst_TXD3   ( HPS_ENET_TX_DATA[3] ),	//	.hps_io_emac1_inst_TXD3
+	.hps_0_hps_io_hps_io_emac1_inst_RXD0   ( HPS_ENET_RX_DATA[0] ),	//	.hps_io_emac1_inst_RXD0
+	.hps_0_hps_io_hps_io_emac1_inst_MDIO   ( HPS_ENET_MDIO ),			//	.hps_io_emac1_inst_MDIO
+	.hps_0_hps_io_hps_io_emac1_inst_MDC    ( HPS_ENET_MDC  ),			//	.hps_io_emac1_inst_MDC
+	.hps_0_hps_io_hps_io_emac1_inst_RX_CTL ( HPS_ENET_RX_DV),			//	.hps_io_emac1_inst_RX_CTL
+	.hps_0_hps_io_hps_io_emac1_inst_TX_CTL ( HPS_ENET_TX_EN),			//	.hps_io_emac1_inst_TX_CTL
+	.hps_0_hps_io_hps_io_emac1_inst_RX_CLK ( HPS_ENET_RX_CLK),			//	.hps_io_emac1_inst_RX_CLK
+	.hps_0_hps_io_hps_io_emac1_inst_RXD1   ( HPS_ENET_RX_DATA[1] ),	//	.hps_io_emac1_inst_RXD1
+	.hps_0_hps_io_hps_io_emac1_inst_RXD2   ( HPS_ENET_RX_DATA[2] ),	//	.hps_io_emac1_inst_RXD2
+	.hps_0_hps_io_hps_io_emac1_inst_RXD3   ( HPS_ENET_RX_DATA[3] ),	//	.hps_io_emac1_inst_RXD3		  
+	//HPS SD card
+	.hps_0_hps_io_hps_io_sdio_inst_CMD     ( HPS_SD_CMD    ),				//	.hps_io_sdio_inst_CMD
+	.hps_0_hps_io_hps_io_sdio_inst_D0      ( HPS_SD_DATA[0]     ),		//	.hps_io_sdio_inst_D0
+	.hps_0_hps_io_hps_io_sdio_inst_D1      ( HPS_SD_DATA[1]     ),		//	.hps_io_sdio_inst_D1
+	.hps_0_hps_io_hps_io_sdio_inst_CLK     ( HPS_SD_CLK   ),				//	.hps_io_sdio_inst_CLK
+	.hps_0_hps_io_hps_io_sdio_inst_D2      ( HPS_SD_DATA[2]     ),		//	.hps_io_sdio_inst_D2
+	.hps_0_hps_io_hps_io_sdio_inst_D3      ( HPS_SD_DATA[3]     ),		//	.hps_io_sdio_inst_D3
+	//HPS USB
+	.hps_0_hps_io_hps_io_usb1_inst_D0      ( HPS_USB_DATA[0]    ),		//	.hps_io_usb1_inst_D0
+	.hps_0_hps_io_hps_io_usb1_inst_D1      ( HPS_USB_DATA[1]    ),		//	.hps_io_usb1_inst_D1
+	.hps_0_hps_io_hps_io_usb1_inst_D2      ( HPS_USB_DATA[2]    ),		//	.hps_io_usb1_inst_D2
+	.hps_0_hps_io_hps_io_usb1_inst_D3      ( HPS_USB_DATA[3]    ),		//	.hps_io_usb1_inst_D3
+	.hps_0_hps_io_hps_io_usb1_inst_D4      ( HPS_USB_DATA[4]    ),		//	.hps_io_usb1_inst_D4
+	.hps_0_hps_io_hps_io_usb1_inst_D5      ( HPS_USB_DATA[5]    ),		//	.hps_io_usb1_inst_D5
+	.hps_0_hps_io_hps_io_usb1_inst_D6      ( HPS_USB_DATA[6]    ),		//	.hps_io_usb1_inst_D6
+	.hps_0_hps_io_hps_io_usb1_inst_D7      ( HPS_USB_DATA[7]    ),		//	.hps_io_usb1_inst_D7
+	.hps_0_hps_io_hps_io_usb1_inst_CLK     ( HPS_USB_CLKOUT    ),		//	.hps_io_usb1_inst_CLK
+	.hps_0_hps_io_hps_io_usb1_inst_STP     ( HPS_USB_STP    ),			//	.hps_io_usb1_inst_STP
+	.hps_0_hps_io_hps_io_usb1_inst_DIR     ( HPS_USB_DIR    ),			//	.hps_io_usb1_inst_DIR
+	.hps_0_hps_io_hps_io_usb1_inst_NXT     ( HPS_USB_NXT    ),			//	.hps_io_usb1_inst_NXT
+	//HPS SPI 		  
+	.hps_0_hps_io_hps_io_spim1_inst_CLK    ( HPS_SPIM_CLK  ),			//	.hps_io_spim1_inst_CLK
+	.hps_0_hps_io_hps_io_spim1_inst_MOSI   ( HPS_SPIM_MOSI ),			//	.hps_io_spim1_inst_MOSI
+	.hps_0_hps_io_hps_io_spim1_inst_MISO   ( HPS_SPIM_MISO ),			//	.hps_io_spim1_inst_MISO
+	.hps_0_hps_io_hps_io_spim1_inst_SS0    ( HPS_SPIM_SS   ),			//	.hps_io_spim1_inst_SS0
+	//HPS UART		
+	.hps_0_hps_io_hps_io_uart0_inst_RX     ( HPS_UART_RX   ),			//	.hps_io_uart0_inst_RX
+	.hps_0_hps_io_hps_io_uart0_inst_TX     ( HPS_UART_TX   ),			//	.hps_io_uart0_inst_TX
+	//HPS I2C1
+	.hps_0_hps_io_hps_io_i2c0_inst_SDA     ( HPS_I2C0_SDAT  ),			//	.hps_io_i2c0_inst_SDA
+	.hps_0_hps_io_hps_io_i2c0_inst_SCL     ( HPS_I2C0_SCLK  ),			//	.hps_io_i2c0_inst_SCL
+	//HPS I2C2
+	.hps_0_hps_io_hps_io_i2c1_inst_SDA     ( HPS_I2C1_SDAT  ),			//	.hps_io_i2c1_inst_SDA
+	.hps_0_hps_io_hps_io_i2c1_inst_SCL     ( HPS_I2C1_SCLK  ),			//	.hps_io_i2c1_inst_SCL
+	//GPIO 
+	.hps_0_hps_io_hps_io_gpio_inst_GPIO09  ( HPS_CONV_USB_N ),			//	.hps_io_gpio_inst_GPIO09
+	.hps_0_hps_io_hps_io_gpio_inst_GPIO35  ( HPS_ENET_INT_N ),			//	.hps_io_gpio_inst_GPIO35
+	.hps_0_hps_io_hps_io_gpio_inst_GPIO40  ( HPS_LTC_GPIO   ),			//	.hps_io_gpio_inst_GPIO40
+	.hps_0_hps_io_hps_io_gpio_inst_GPIO53  ( HPS_LED   ),					//	.hps_io_gpio_inst_GPIO53
+	.hps_0_hps_io_hps_io_gpio_inst_GPIO54  ( HPS_KEY   ),					//	.hps_io_gpio_inst_GPIO54
+	.hps_0_hps_io_hps_io_gpio_inst_GPIO61  ( HPS_GSENSOR_INT ),			//	.hps_io_gpio_inst_GPIO61
+	//FPGA Partion
+	.custom_leds_0_leds_new_signal    ( fpga_led_internal 	),			//	led_pio_external_connection.export
+	.dipsw_pio_external_connection_export  ( SW	),							//	dipsw_pio_external_connection.export
+	.button_pio_external_connection_export ( fpga_debounced_buttons),	//	button_pio_external_connection.export
+
+	.hps_0_h2f_reset_reset_n               ( hps_fpga_reset_n ),		//	hps_0_h2f_reset.reset_n
+	.hps_0_f2h_cold_reset_req_reset_n      (~hps_cold_reset ),			//	hps_0_f2h_cold_reset_req.reset_n
+	.hps_0_f2h_debug_reset_req_reset_n     (~hps_debug_reset ),			//	hps_0_f2h_debug_reset_req.reset_n
+	.hps_0_f2h_stm_hw_events_stm_hwevents  (stm_hw_events ),				//	hps_0_f2h_stm_hw_events.stm_hwevents
+	.hps_0_f2h_warm_reset_req_reset_n      (~hps_warm_reset ),			//	hps_0_f2h_warm_reset_req.reset_n
+
+	.custom_prescaller_0_prescaller_new_signal (count),					// custom_prescaller_0_prescaller.new_signal
+
+	//.custom_pwm_0_pwm_out_new_signal           (PWM_DATA_1),			//	custom_pwm_0_pwm_out.new_signal
+	//.custom_pwm_1_pwm_out_new_signal           (PWM_DATA_2),			//	custom_pwm_1_pwm_out.new_signal
+
+	// I2C interface from HPS export to FPGA
+	//.hps_0_i2c2_scl_in_clk                     (scl_o),					//	hps_0_i2c2_scl_in.clk
+	//.hps_0_i2c2_clk_clk                        (scl_o_e),				//	hps_0_i2c2_clk.clk
+	//.hps_0_i2c2_out_data                       (sda_o_e),				//	hps_0_i2c2.out_data
+	//.hps_0_i2c2_sda                            (sda_o),					//	.sda
+
+	// Prescaller count test
+	.avalon_pwm_0_conduit_end_new_signal		(PWM_DATA_1),				//	avalon_pwm_0_conduit_end.new_signal
+	.custom_pwm_0_pwm_out_new_signal           (PWM_IN_1),				//	custom_pwm_0_pwm_out.new_signal
+	
+	.avalon_rpm_0_conduit_end_new_signal       (RPM_MEDIDO1),			//	avalon_rpm_0_conduit_end.new_signal
+	.avalon_encoder_0_conduit_end_new_signal   (Count1)					//	avalon_encoder_0_conduit_end.new_signal
  );
+ 
+ //PWM_Generator PWM_1(!KEY[0], FPGA_CLK1_50, PWM_DATA_1, ARDUINO_IO[9]);
  
  //pwm_avalon_bridge #(
 //		.NUMBER_OF_MOTORS (2),
@@ -381,5 +407,7 @@ else
 		counter<=counter+1'b1;
 end
 
+//assign GPIO_1[0]=led_level;
 assign LED[0]=led_level;
+
 endmodule

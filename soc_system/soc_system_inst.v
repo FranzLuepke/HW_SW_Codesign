@@ -1,9 +1,11 @@
 	soc_system u0 (
+		.avalon_pwm_0_conduit_end_new_signal       (<connected-to-avalon_pwm_0_conduit_end_new_signal>),       //       avalon_pwm_0_conduit_end.new_signal
+		.avalon_rpm_0_conduit_end_new_signal       (<connected-to-avalon_rpm_0_conduit_end_new_signal>),       //       avalon_rpm_0_conduit_end.new_signal
 		.button_pio_external_connection_export     (<connected-to-button_pio_external_connection_export>),     // button_pio_external_connection.export
 		.clk_clk                                   (<connected-to-clk_clk>),                                   //                            clk.clk
-		.custom_count_0_count_new_signal           (<connected-to-custom_count_0_count_new_signal>),           //           custom_count_0_count.new_signal
 		.custom_leds_0_leds_new_signal             (<connected-to-custom_leds_0_leds_new_signal>),             //             custom_leds_0_leds.new_signal
 		.custom_prescaller_0_prescaller_new_signal (<connected-to-custom_prescaller_0_prescaller_new_signal>), // custom_prescaller_0_prescaller.new_signal
+		.custom_pwm_0_pwm_out_new_signal           (<connected-to-custom_pwm_0_pwm_out_new_signal>),           //           custom_pwm_0_pwm_out.new_signal
 		.dipsw_pio_external_connection_export      (<connected-to-dipsw_pio_external_connection_export>),      //  dipsw_pio_external_connection.export
 		.hps_0_f2h_cold_reset_req_reset_n          (<connected-to-hps_0_f2h_cold_reset_req_reset_n>),          //       hps_0_f2h_cold_reset_req.reset_n
 		.hps_0_f2h_debug_reset_req_reset_n         (<connected-to-hps_0_f2h_debug_reset_req_reset_n>),         //      hps_0_f2h_debug_reset_req.reset_n
@@ -75,6 +77,6 @@
 		.memory_mem_dm                             (<connected-to-memory_mem_dm>),                             //                               .mem_dm
 		.memory_oct_rzqin                          (<connected-to-memory_oct_rzqin>),                          //                               .oct_rzqin
 		.reset_reset_n                             (<connected-to-reset_reset_n>),                             //                          reset.reset_n
-		.avalon_pwm_0_conduit_end_new_signal       (<connected-to-avalon_pwm_0_conduit_end_new_signal>)        //       avalon_pwm_0_conduit_end.new_signal
+		.avalon_encoder_0_conduit_end_new_signal   (<connected-to-avalon_encoder_0_conduit_end_new_signal>)    //   avalon_encoder_0_conduit_end.new_signal
 	);
 

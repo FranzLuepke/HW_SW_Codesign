@@ -420,6 +420,8 @@ set_instance_assignment -name GLOBAL_SIGNAL OFF -to u0|hps_0|hps_io|border|hps_s
 set_instance_assignment -name GLOBAL_SIGNAL OFF -to u0|hps_0|hps_io|border|hps_sdram_inst|p0|umemphy|uread_datapath|reset_n_fifo_wraddress[3] -tag __hps_sdram_p0
 set_instance_assignment -name ENABLE_BENEFICIAL_SKEW_OPTIMIZATION_FOR_NON_GLOBAL_CLOCKS ON -to u0|hps_0|hps_io|border|hps_sdram_inst -tag __hps_sdram_p0
 set_instance_assignment -name PLL_COMPENSATION_MODE DIRECT -to u0|hps_0|hps_io|border|hps_sdram_inst|pll0|fbout -tag __hps_sdram_p0
+set_global_assignment -name VERILOG_FILE source_v/PID_control.v
+set_global_assignment -name VERILOG_FILE source_v/RPM.v
 set_global_assignment -name VERILOG_FILE source_v/DeBounce1.v
 set_global_assignment -name VERILOG_FILE source_v/Encoder.v
 set_global_assignment -name SYSTEMVERILOG_FILE ip/custom_leds/custom_leds.sv
@@ -437,6 +439,7 @@ set_global_assignment -name VERILOG_FILE source_v/pwm_avalon_bridge.v
 set_global_assignment -name VERILOG_FILE source_v/Encoder_avalon_bridge.v
 set_global_assignment -name VERILOG_FILE ghrd.v
 set_global_assignment -name VERILOG_FILE source_v/avalon_led.v
+set_global_assignment -name VERILOG_FILE source_v/Avalon/avalon_rpm.v
 set_instance_assignment -name IO_STANDARD "SSTL-15 CLASS I" -to HPS_DDR3_RZQ -tag __hps_sdram_p0
 set_instance_assignment -name IO_STANDARD "SSTL-15 CLASS I" -to HPS_DDR3_DQ[0] -tag __hps_sdram_p0
 set_instance_assignment -name INPUT_TERMINATION "PARALLEL 50 OHM WITH CALIBRATION" -to HPS_DDR3_DQ[0] -tag __hps_sdram_p0
