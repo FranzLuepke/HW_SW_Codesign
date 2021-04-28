@@ -6,7 +6,7 @@
 #include <linux/types.h>
 #include <linux/uaccess.h>
 
-static short procfs_buffer_size = 0;
+// static short procfs_buffer_size = 0;
 
 // Prototypes
 static int dev_open(struct inode *, struct file *);
@@ -25,7 +25,7 @@ struct custom_rpm_dev {
 // Specify which device tree devices this driver supports
 static struct of_device_id custom_rpm_dt_ids[] = {
     {
-        .compatible = "dev,custom-rpm"
+        .compatible = "dev,avalon-rpm"
     },
     { /* end of table */ }
 };
@@ -58,29 +58,30 @@ static int dev_open(struct inode *inodep, struct file *filep)
    printk(KERN_INFO "OPEN!");
    // numberOpens++;
    // printk(KERN_INFO "EBBChar: Device has been opened %d time(s)\n", numberOpens);
-   printk(KERN_INFO " RPM module: Device has been opened.\n");
+   printk(KERN_INFO " dev_open: RPM module: Device has been opened.\n");
    return 0;
 }
 
 static int dev_release(struct inode *inodep, struct file *filep)
 {
    printk(KERN_INFO "RELEASE!");
-   printk(KERN_INFO " RPM module: Device successfully closed.\n");
+   printk(KERN_INFO " dev_release: RPM module: Device successfully closed.\n");
    return 0;
 }
 // Called when the driver is installed
 static int rpm_init(void)
 {
     int ret_val = 0;
-    pr_info("Initializing the Custom RPM module\n");
+    pr_info("------------------- RPM MODULE -------------------\n");
+    pr_info(" rpm_init: Initializing the Custom RPM module\n");
     // Register our driver with the "Platform Driver" bus
     ret_val = platform_driver_register(&rpm_platform);
     if(ret_val != 0)
     {
-        pr_err("platform_driver_register returned %d\n", ret_val);
+        pr_err(" rpm_init: platform_driver_register returned %d\n", ret_val);
         return ret_val;
     }
-    pr_info("Custom RPM module successfully initialized!\n");
+    pr_info(" rpm_init: Custom RPM module successfully initialized!\n");
     return 0;
 }
 
@@ -91,12 +92,12 @@ static int rpm_probe(struct platform_device *pdev)
     int ret_val = -EBUSY;
     struct custom_rpm_dev *dev;
     struct resource *r = 0;
-    pr_info("rpm_probe enter\n");
+    pr_info(" rpm_probe: Begin\n");
     // Get the memory resources for this LED device
     r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
     if(r == NULL)
     {
-        pr_err("IORESOURCE_MEM (register space) does not exist\n");
+        pr_err(" rpm_probe: IORESOURCE_MEM (register space) does not exist\n");
         goto bad_exit_return;
     }
     // Create structure to hold device-specific information (like the registers)
@@ -109,25 +110,25 @@ static int rpm_probe(struct platform_device *pdev)
         goto bad_ioremap;
     // Initialize the misc device (this is used to create a character file in userspace)
     dev->miscdev.minor = MISC_DYNAMIC_MINOR;    // Dynamically choose a minor number
-    dev->miscdev.name = "custom_rpm";
+    dev->miscdev.name = "avalon_rpm";
     dev->miscdev.fops = &custom_rpm_fops;
 
     ret_val = misc_register(&dev->miscdev);
     if(ret_val != 0)
     {
-        pr_info("Couldn't register misc device :(");
+        pr_info(" rpm_probe: Couldn't register misc device :(");
         goto bad_exit_return;
     }
     // Give a pointer to the instance-specific data to the generic platform_device structure
     // so we can access this data later on (for instance, in the read and write functions)
     platform_set_drvdata(pdev, (void*)dev);
-    pr_info("rpm_probe exit\n");
+    pr_info(" rpm_probe: Exit\n");
     return 0;
 
 bad_ioremap:
    ret_val = PTR_ERR(dev->regs); 
 bad_exit_return:
-    pr_info("rpm_probe bad exit :(\n");
+    pr_info(" rpm_probe: Bad exit :(\n");
     return ret_val;
 }
 
@@ -141,7 +142,7 @@ static ssize_t rpm_read(struct file *file, char *buffer, size_t len, loff_t *off
     // If we failed to copy the value to userspace, display an error message
     if(success != 0)
     {
-        pr_info("Failed to return current rpm value to userspace\n");
+        pr_info(" rpm_read: Failed to return current rpm value to userspace\n");
         return -EFAULT; // Bad address error value. It's likely that "buffer" doesn't point to a good address
     }
     return 0;
@@ -154,21 +155,21 @@ static int rpm_remove(struct platform_device *pdev)
 {
     // Grab the instance-specific information out of the platform device
     struct custom_rpm_dev *dev = (struct custom_rpm_dev*)platform_get_drvdata(pdev);
-    pr_info("rpm_remove enter\n");
+    pr_info(" rpm_remove: Removing...\n");
     // Unregister the character file (remove it from /dev)
     misc_deregister(&dev->miscdev);
-    pr_info("rpm_remove exit\n");
+    pr_info(" rpm_remove: Removed.\n");
     return 0;
 }
 
 // Called when the driver is removed
 static void rpm_exit(void)
 {
-    pr_info("Custom RPM module exit\n");
+    pr_info(" rpm_exit: Custom RPM module exit\n");
     // Unregister our driver from the "Platform Driver" bus
     // This will cause "rpm_remove" to be called for each connected device
     platform_driver_unregister(&rpm_platform);
-    pr_info("Custom RPM module successfully unregistered\n");
+    pr_info(" rpm_exit: Custom RPM module successfully unregistered\n");
 }
 
 // Tell the kernel which functions are the initialization and exit functions

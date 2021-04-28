@@ -54,8 +54,8 @@ int main(int argc, char ** argv)
     // for(int i = 0; i < 10000; ++i)
     while(1)
     {
-        rpm_value = (uint32_t*)rpm_map[0];
-        printf("\r Value read: %p", &rpm_value);
+        rpm_value = rpm_map[0];
+        printf("\r Value read: %x", rpm_value);
         fflush(stdout);
         // *custom_leds_map = dipsw_value;
         usleep(time_delay);
