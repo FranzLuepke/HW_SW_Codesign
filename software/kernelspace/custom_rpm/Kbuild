@@ -1,2 +1,2 @@
-obj-m := custom_leds.o
+obj-m := custom_rpm.o
 

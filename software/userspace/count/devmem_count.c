@@ -45,16 +45,16 @@ int main(int argc, char ** argv)
         exit(EXIT_FAILURE);
     }
     // Set the custom_dipsw_map to the correct offset within the RAM (DIPSW_PIO_BASE is from "hps_0.h")
-    count_map = (uint32_t*)(lw_bridge_map + CUSTOM_COUNT_0_BASE);
+    count_map = (uint32_t*)(lw_bridge_map + AVALON_ENCODER_0_BASE);
     // custom_dipsw_map = (uint32_t*)(lw_bridge_map + DIPSW_PIO_BASE);
     // custom_leds_map = (uint32_t*)(lw_bridge_map + CUSTOM_LEDS_0_BASE);
     printf("This program reads continuously the first encoder count. To finish reading use Ctrl+C.\n");
     printf(" Reading...\n");
-    init_value = (uint32_t*)count_map[0];
+    init_value = (uint32_t*)count_map;
     // for(int i = 0; i < 10000; ++i)
     while(1)
     {
-        count_value = (uint32_t*)count_map[0];
+        count_value = (uint32_t*)count_map;
         printf("\r Value read: %d", count_value-init_value);
         // printf("\r Value read: %d", count_value);
         fflush(stdout);

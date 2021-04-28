@@ -56,35 +56,36 @@ int main(int argc, char ** argv)
     // Set the custom_pwm_map to the correct offset within the RAM (CUSTOM_PWM_0_BASE is from "hps_0.h")
     custom_pwm_0_map = (uint32_t*)(lw_bridge_map + CUSTOM_PWM_0_BASE);
     // custom_pwm_1_map = (uint32_t*)(lw_bridge_map + CUSTOM_PWM_1_BASE);
-    printf("The number of steps selected are: %d\n", steps);
     // Change PWM
-    printf("Changing PWM from 0 to 100 and back to 0...\n");
     
     // *custom_pwm_map = 125;
     // // Wait 2 seconds
     // usleep(20000s00);
 
-    printf(" Sweep Up...\n");
-    for(int i = 0; i < steps+1; ++i)
-    {
-        *custom_pwm_0_map = (i*max_pwm)/steps;
-        // *custom_pwm_1_map = (i*max_pwm)/steps;
-        // *custom_pwm_map = 253;
-        // Wait time_steps seconds
-        usleep(time_steps);
-    }
-    usleep(2000000);
-    printf(" Sweep Down...\n");
-    for(int i = steps-1; i > -1; --i)
-    {
-        *custom_pwm_0_map = (i*max_pwm)/steps;
-        // *custom_pwm_map = 253;
-        // Wait time_steps seconds
-        usleep(time_steps);
-    }
-    printf("Done!\n");
+    // printf("The number of steps selected are: %d\n", steps);
+    // printf("Changing PWM from 0 to 100 and back to 0...\n");
+    // printf(" Sweep Up...\n");
+    // for(int i = 0; i < steps+1; ++i)
+    // {
+    //     *custom_pwm_0_map = (i*max_pwm)/steps;
+    //     // *custom_pwm_1_map = (i*max_pwm)/steps;
+    //     // *custom_pwm_map = 253;
+    //     // Wait time_steps seconds
+    //     usleep(time_steps);
+    // }
+    // usleep(2000000);
+    // printf(" Sweep Down...\n");
+    // for(int i = steps-1; i > -1; --i)
+    // {
+    //     *custom_pwm_0_map = (i*max_pwm)/steps;
+    //     // *custom_pwm_map = 253;
+    //     // Wait time_steps seconds
+    //     usleep(time_steps);
+    // }
+    // printf("Done!\n");
 
-    // *custom_pwm_0_map = steps;
+    printf("Selected PWM value: %d\n", steps);
+    *custom_pwm_0_map = steps;
     // *custom_pwm_1_map = steps2;
 
     // Unmap everything and close the /dev/mem file descriptor
