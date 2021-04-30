@@ -1,4 +1,4 @@
-TARGET = test_custom_leds
+TARGET = test_avalon_rpm
 
 CROSS_COMPILE = arm-linux-gnueabihf-
 CFLAGS = -g -Wall  -I${SOCEDS_DEST_ROOT}/ip/altera/hps/altera_hps/hwlib/include
@@ -17,4 +17,4 @@ $(TARGET): $(TARGET).o
 clean:
 	rm -f $(TARGET) *.a *.o *~ 
 install:$(TARGET)
-	scp testebbchar root@${HOST}:/root
+	scp $(TARGET) root@${HOST}:/root
